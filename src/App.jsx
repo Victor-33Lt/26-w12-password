@@ -9,6 +9,23 @@ import './App.css';
 export default function App() {
   const [activeTab, setActiveTab] = useState('checker');
   const [sharedPassword, setSharedPassword] = useState('');
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('theme_preference') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem('theme_preference', nextTheme);
+    } catch {
+      // localStorage 불가 환경 예외 처리
+    }
+  };
 
   // 생성기에서 검사기로 바로 이동
   const handleSendToChecker = (pwd) => {
@@ -17,11 +34,11 @@ export default function App() {
   };
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout ${theme === 'light' ? 'theme-light' : 'theme-dark'}`} data-theme={theme}>
       <div className="background-glow"></div>
       
       <div className="main-wrapper">
-        <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Header activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} toggleTheme={toggleTheme} />
 
         <main className="content-area">
           {activeTab === 'checker' && (
